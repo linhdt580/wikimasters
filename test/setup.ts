@@ -5,8 +5,24 @@ import { afterEach, beforeEach, vi } from "vitest";
 dotenv.config({ quiet: true, path: ".env.test" });
 dotenv.config({ quiet: true, path: ".env.test.local" });
 
+// Mock dependencies BEFORE any imports that use them
+vi.mock("@stackframe/stack", () => ({
+  __esModule: true,
+  StackServerApp: vi.fn().mockImplementation(() => ({
+    getUser: vi.fn().mockResolvedValue(null),
+  })),
+}));
+
+vi.mock("@/stack/server", () => ({
+  __esModule: true,
+  stackServerApp: {
+    getUser: vi.fn().mockResolvedValue(null),
+  },
+}));
+
 // Mock Next.js redirect function
 vi.mock("next/navigation", () => ({
+  __esModule: true,
   redirect: vi.fn(),
   useRouter: vi.fn(() => ({
     push: vi.fn(),
@@ -20,7 +36,6 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/ai/summarize", () => ({
   __esModule: true,
   default: vi.fn().mockResolvedValue("This is a test summary."),
-  summarizeArticle: vi.fn().mockResolvedValue("This is a test summary."),
 }));
 
 // Setup and cleanup hooks can be added here

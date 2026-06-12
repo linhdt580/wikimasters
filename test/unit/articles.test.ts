@@ -1,5 +1,17 @@
-import type { CurrentUser } from "@stackframe/stack";
+// Mock dependencies FIRST - before any other imports
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+// These mocks must be called before importing modules that depend on them
+vi.mock("@stackframe/stack");
+vi.mock("@/stack/server");
+vi.mock("@/db/index");
+vi.mock("@/db/authz");
+vi.mock("@/cache");
+vi.mock("@/ai/summarize");
+vi.mock("@/db/sync-user");
+
+// Now safe to import other modules
+import type { CurrentUser } from "@stackframe/stack";
 import summarizeArticle from "@/ai/summarize";
 import {
   createArticle,
@@ -11,14 +23,6 @@ import * as authz from "@/db/authz";
 import db from "@/db/index";
 import { articles } from "@/db/schema";
 import { stackServerApp } from "@/stack/server";
-
-// Mock dependencies
-vi.mock("@/db/index");
-vi.mock("@/stack/server");
-vi.mock("@/db/authz");
-vi.mock("@/cache");
-vi.mock("@/ai/summarize");
-vi.mock("@/db/sync-user");
 
 describe("Article Actions", () => {
   const mockUser = {
